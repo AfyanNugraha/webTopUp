@@ -1,0 +1,2110 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top Up Center</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    
+        /* Simple Scroll for Invoice Modal */
+    #invoice-modal {
+      align-items: center !important;
+      padding: 1rem;
+    }
+
+    #invoice-modal > .card-gradient {
+      max-height: 90vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+    }
+
+    #invoice-modal > .card-gradient::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #invoice-modal > .card-gradient::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #invoice-modal > .card-gradient::-webkit-scrollbar-thumb {
+      background: rgba(139, 92, 246, 0.3);
+      border-radius: 2px;
+    }
+
+    #invoice-modal > .card-gradient::-webkit-scrollbar-thumb:hover {
+      background: rgba(139, 92, 246, 0.5);
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0d0d1a 100%);
+    }
+    
+    .card-gradient {
+      background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .glow-purple {
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+    }
+
+    .glow-cyan {
+      box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    }
+    
+    .btn-danger:hover {
+      box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4);
+    }
+    
+    .product-card {
+      transition: all 0.3s ease;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(139, 92, 246, 0.5);
+    }
+    
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+    }
+
+    /* Ensure modals can be displayed */
+    .modal-overlay.flex {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    .modal-overlay.hidden {
+      display: none !important;
+      visibility: hidden !important;
+    }
+    
+    .pulse-dot {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full gradient-bg text-white overflow-auto scrollbar-hide"><!-- Main Store View -->
+   <div id="store-view" class="min-h-full"><!-- Header -->
+    <header class="sticky top-0 z-40 bg-opacity-90 backdrop-blur-lg border-b border-white/10" style="background: rgba(15, 15, 35, 0.9);">
+     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center glow-purple">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+       </div>
+       <h1 id="site-title" class="text-xl font-bold bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">Top Up Center</h1>
+      </div><button onclick="showAdminAccess()" class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Admin Panel">
+       <svg class="w-6 h-6 text-gray-400 hover:text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+       </svg></button>
+     </div>
+    </header><!-- Hero Section -->
+    <section class="relative py-16 px-4 overflow-hidden">
+     <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute top-20 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-10 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl"></div>
+     </div>
+     <div class="relative max-w-4xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-6"><span class="w-2 h-2 rounded-full bg-green-400 pulse-dot"></span> <span class="text-sm text-gray-300">Layanan 24/7 Online</span>
+      </div>
+      <h2 id="hero-text" class="text-4xl md:text-5xl font-bold mb-4 leading-tight">Top Up Game <span class="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">Cepat &amp; Aman</span></h2>
+      <p class="text-gray-400 text-lg mb-8 max-w-2xl mx-auto">Isi ulang diamond, voucher, dan item game favoritmu dengan harga terbaik. Proses instan!</p>
+     </div>
+    </section><!-- Categories -->
+    <section class="px-4 mb-8">
+     <div class="max-w-7xl mx-auto">
+      <div id="categories-nav" class="flex gap-3 overflow-x-auto pb-2 scrollbar-hide"><!-- Categories will be rendered here -->
+      </div>
+     </div>
+    </section><!-- Products Grid -->
+    <section class="px-4 pb-16">
+     <div class="max-w-7xl mx-auto">
+      <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"><!-- Products will be rendered here -->
+      </div>
+      <div id="empty-products" class="hidden text-center py-16">
+       <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-white/5 flex items-center justify-center">
+        <svg class="w-12 h-12 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+        </svg>
+       </div>
+       <h3 class="text-xl font-semibold text-gray-400 mb-2">Belum Ada Produk</h3>
+       <p class="text-gray-500">Produk akan ditambahkan oleh admin</p>
+      </div>
+     </div>
+    </section>
+   </div><!-- Admin Access Modal -->
+    <div id="admin-access-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay">
+    <div class="card-gradient rounded-2xl p-6 w-full max-w-sm">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-500 to-cyan-400 flex items-center justify-center">
+       <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+       </svg>
+      </div>
+        <h3 class="text-xl font-bold">Admin Login</h3>
+        <p class="text-gray-400 text-sm mt-1">Masukkan Username & PIN untuk mengakses panel admin</p>
+      </div>
+      <form id="pin-form" novalidate class="space-y-4" onsubmit="verifyAdmin(event); return false;">
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Username</label>
+        <input type="text" id="admin-username" placeholder="admin" 
+               class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center" 
+               required autocomplete="username">
+      </div>
+        <div>
+          <label for="admin-pin" class="block text-sm font-medium text-gray-300 mb-2">PIN</label>
+          <input type="password" id="admin-pin" maxlength="6" placeholder="••••••" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-2xl tracking-widest mb-2" required>
+        </div>
+        <p id="login-error" class="text-red-400 text-sm text-center hidden mb-4">Username atau PIN salah!</p>
+        <p class="text-gray-500 text-xs text-center mb-4 bg-gray-900/50 p-2 rounded-lg">
+          <strong>Default:</strong><br>
+          Username: <code class="bg-gray-800 px-1 rounded">admin</code><br>
+          PIN: <code class="bg-gray-800 px-1 rounded">123456</code>
+        </p>
+        <div class="flex gap-3">
+          <button type="button" onclick="hideAdminAccess()" class="flex-1 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors font-medium">Batal</button>
+          <button type="submit" class="flex-1 px-4 py-3 rounded-xl btn-primary font-medium">Masuk</button>
+        </div>
+      </form>
+    </div>
+  </div><!-- Admin Panel View -->
+   <div id="admin-view" class="hidden min-h-full"><!-- Admin Header -->
+    <header class="sticky top-0 z-40 bg-opacity-90 backdrop-blur-lg border-b border-white/10" style="background: rgba(15, 15, 35, 0.9);">
+     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold">Admin Panel</h1>
+          <p id="admin-welcome" class="text-xs text-gray-400">Selamat datang, Admin!</p>
+        </div>
+      </div><button onclick="exitAdmin()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+       </svg><span class="hidden sm:inline">Keluar</span> </button>
+     </div>
+    </header><!-- Admin Content -->
+    <div class="max-w-7xl mx-auto px-4 py-8"><!-- Stats Cards -->
+     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="card-gradient rounded-xl p-4">
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+         <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+         </svg>
+        </div>
+        <div>
+         <p class="text-2xl font-bold" id="stat-products">0</p>
+         <p class="text-xs text-gray-400">Produk</p>
+        </div>
+       </div>
+      </div>
+      <div class="card-gradient rounded-xl p-4">
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+         <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+         </svg>
+        </div>
+        <div>
+         <p class="text-2xl font-bold" id="stat-categories">0</p>
+         <p class="text-xs text-gray-400">Kategori</p>
+        </div>
+       </div>
+      </div>
+      <div class="card-gradient rounded-xl p-4">
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+         <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+         </svg>
+        </div>
+        <div>
+         <p class="text-2xl font-bold" id="stat-active">0</p>
+         <p class="text-xs text-gray-400">Aktif</p>
+        </div>
+       </div>
+      </div>
+      <div class="card-gradient rounded-xl p-4">
+       <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
+         <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+         </svg>
+        </div>
+        <div>
+         <p class="text-2xl font-bold" id="stat-total-value">Rp 0</p>
+         <p class="text-xs text-gray-400">Total Nilai</p>
+        </div>
+       </div>
+      </div>
+     </div><!-- Tabs -->
+     <div class="flex gap-2 mb-6 border-b border-white/10 pb-4"><button onclick="switchAdminTab('products')" id="tab-products" class="px-4 py-2 rounded-lg bg-purple-500/20 text-purple-400 font-medium transition-colors">Produk</button> <button onclick="switchAdminTab('categories')" id="tab-categories" class="px-4 py-2 rounded-lg hover:bg-white/5 text-gray-400 font-medium transition-colors">Kategori</button> <button onclick="switchAdminTab('settings')" id="tab-settings" class="px-4 py-2 rounded-lg hover:bg-white/5 text-gray-400 font-medium transition-colors">Pengaturan</button>
+     </div><!-- Products Tab -->
+     <div id="admin-products" class="space-y-4">
+      <div class="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+       <h2 class="text-lg font-semibold">Daftar Produk</h2><button onclick="showProductModal()" class="flex items-center gap-2 px-4 py-2 rounded-xl btn-primary font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg> Tambah Produk </button>
+      </div>
+      <div id="admin-products-list" class="space-y-3"><!-- Products list will be rendered here -->
+      </div>
+      <div id="admin-empty-products" class="hidden card-gradient rounded-xl p-8 text-center">
+       <svg class="w-16 h-16 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+       </svg>
+       <p class="text-gray-400">Belum ada produk. Klik tombol "Tambah Produk" untuk menambahkan.</p>
+      </div>
+     </div><!-- Categories Tab -->
+     <div id="admin-categories" class="hidden space-y-4">
+      <div class="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
+       <h2 class="text-lg font-semibold">Daftar Kategori</h2><button onclick="showCategoryModal()" class="flex items-center gap-2 px-4 py-2 rounded-xl btn-primary font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg> Tambah Kategori </button>
+      </div>
+      <div id="admin-categories-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"><!-- Categories list will be rendered here -->
+      </div>
+      <div id="admin-empty-categories" class="hidden card-gradient rounded-xl p-8 text-center">
+       <svg class="w-16 h-16 mx-auto mb-4 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+       </svg>
+       <p class="text-gray-400">Belum ada kategori. Klik tombol "Tambah Kategori" untuk menambahkan.</p>
+      </div>
+     </div><!-- Settings Tab -->
+     <div id="admin-settings" class="hidden space-y-4">
+      <h2 class="text-lg font-semibold mb-4">Pengaturan</h2>
+            <div class="card-gradient rounded-xl p-6 space-y-4">
+        <div>
+          <h3 class="font-medium mb-3 text-purple-400">👤 Akun Admin</h3>
+          <div class="grid grid-cols-1 gap-3">
+            <div>
+              <label for="settings-username" class="block text-sm font-medium text-gray-300 mb-2">Username baru</label>
+              <div class="flex gap-2">
+                <input type="text" id="settings-username" placeholder="admin" class="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white">
+                <button onclick="changeAdminCredentials()" class="px-4 py-3 rounded-xl btn-primary font-medium whitespace-nowrap">Update</button>
+              </div>
+            </div>
+            <div>
+              <label for="settings-pin" class="block text-sm font-medium text-gray-300 mb-2">PIN Baru</label>
+              <div class="flex gap-2">
+                <input type="password" id="settings-pin" maxlength="6" placeholder="123456" class="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white">
+                <button onclick="changePin()" class="px-4 py-3 rounded-xl btn-primary font-medium whitespace-nowrap">Update</button>
+              </div>
+            </div>
+          </div>
+          <p class="text-gray-500 text-xs mt-2">Username & PIN disimpan aman di browser</p>
+        </div>
+        
+        <hr class="border-white/10">
+        <div>
+          <h3 class="font-medium mb-3 text-red-400">⚠️ Reset Data</h3>
+          <button onclick="confirmResetData()" class="w-full px-4 py-3 rounded-xl btn-danger font-medium">Reset Semua Data</button>
+          <p class="text-gray-500 text-xs mt-2">Hapus produk, kategori & reset credentials</p>
+        </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Product Modal -->
+   <div id="product-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay">
+    <div class="card-gradient rounded-2xl p-6 w-full max-w-md max-h-[90%] overflow-y-auto">
+     <div class="flex items-center justify-between mb-6">
+      <h3 id="product-modal-title" class="text-xl font-bold">Tambah Produk</h3><button onclick="hideProductModal()" class="p-2 rounded-lg hover:bg-white/10">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <form id="product-form" onsubmit="saveProduct(event)" class="space-y-4"><input type="hidden" id="product-id">
+      <div><label for="product-name" class="block text-sm font-medium text-gray-300 mb-2">Nama Produk *</label> <input type="text" id="product-name" required placeholder="Contoh: Diamond 100" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white">
+      </div>
+      <div><label for="product-category" class="block text-sm font-medium text-gray-300 mb-2">Kategori *</label> <select id="product-category" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white"> <option value="">Pilih Kategori</option> </select>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+       <div><label for="product-price" class="block text-sm font-medium text-gray-300 mb-2">Harga (Rp) *</label> <input type="number" id="product-price" required min="0" placeholder="15000" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white">
+       </div>
+       <div><label for="product-stock" class="block text-sm font-medium text-gray-300 mb-2">Stok</label> <input type="number" id="product-stock" min="0" placeholder="100" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white">
+       </div>
+      </div>
+      <div><label for="product-description" class="block text-sm font-medium text-gray-300 mb-2">Deskripsi</label> <textarea id="product-description" rows="3" placeholder="Deskripsi produk..." class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white resize-none"></textarea>
+      </div>
+      <div><label for="product-emoji" class="block text-sm font-medium text-gray-300 mb-2">Emoji Icon</label> <input type="text" id="product-emoji" maxlength="2" placeholder="💎" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-2xl">
+      </div>
+      <div class="flex items-center gap-3"><input type="checkbox" id="product-active" checked class="w-5 h-5 rounded bg-white/5 border-white/10 text-purple-500 focus:ring-purple-500"> <label for="product-active" class="text-sm text-gray-300">Produk Aktif</label>
+      </div>
+      <div class="flex gap-3 pt-4"><button type="button" onclick="hideProductModal()" class="flex-1 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors font-medium">Batal</button> <button type="submit" class="flex-1 px-4 py-3 rounded-xl btn-primary font-medium">Simpan</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Category Modal -->
+   <div id="category-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay">
+    <div class="card-gradient rounded-2xl p-6 w-full max-w-md">
+     <div class="flex items-center justify-between mb-6">
+      <h3 id="category-modal-title" class="text-xl font-bold">Tambah Kategori</h3><button onclick="hideCategoryModal()" class="p-2 rounded-lg hover:bg-white/10">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <form id="category-form" onsubmit="saveCategory(event)" class="space-y-4"><input type="hidden" id="category-id">
+      <div><label for="category-name" class="block text-sm font-medium text-gray-300 mb-2">Nama Kategori *</label> <input type="text" id="category-name" required placeholder="Contoh: Mobile Legends" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white">
+      </div>
+      <div><label for="category-emoji" class="block text-sm font-medium text-gray-300 mb-2">Emoji Icon</label> <input type="text" id="category-emoji" maxlength="2" placeholder="🎮" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-center text-2xl">
+      </div>
+      <div class="flex gap-3 pt-4"><button type="button" onclick="hideCategoryModal()" class="flex-1 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors font-medium">Batal</button> <button type="submit" class="flex-1 px-4 py-3 rounded-xl btn-primary font-medium">Simpan</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Order Modal -->
+   <div id="order-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay">
+    <div class="card-gradient rounded-2xl p-6 w-full max-w-md max-h-[90%] overflow-y-auto">
+     <div class="flex items-center justify-between mb-6">
+      <h3 class="text-xl font-bold">Detail Pesanan</h3><button onclick="hideOrderModal()" class="p-2 rounded-lg hover:bg-white/10">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <div id="order-product-info" class="text-center mb-6"><!-- Product info will be rendered here -->
+     </div>
+     <form id="order-form" onsubmit="processOrder(event)" class="space-y-4"><input type="hidden" id="order-product-id">
+      <div><label for="order-user-id" class="block text-sm font-medium text-gray-300 mb-2">ID Game / User ID *</label> <input type="text" id="order-user-id" required placeholder="Masukkan ID game kamu" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white">
+      </div>
+      <div><label for="order-server" class="block text-sm font-medium text-gray-300 mb-2">Server (Opsional)</label> <input type="text" id="order-server" placeholder="Contoh: Asia" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white">
+      </div>
+      <div><label for="order-whatsapp" class="block text-sm font-medium text-gray-300 mb-2">No. WhatsApp *</label> <input type="tel" id="order-whatsapp" required placeholder="08xxxxxxxxxx" class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white">
+      </div>
+      <div><label for="order-payment" class="block text-sm font-medium text-gray-300 mb-2">Metode Pembayaran *</label> <select id="order-payment" required class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white"> <option value="">Pilih Metode Pembayaran</option> <option value="transfer_bank">🏦 Transfer Bank</option> <option value="qris">📱 QRIS</option> <option value="gopay">🚗 GoPay</option> <option value="ovo">🟣 OVO</option> <option value="dana">🟠 Dana</option> </select>
+      </div>
+      <div class="flex gap-3 pt-4"><button type="button" onclick="hideOrderModal()" class="flex-1 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors font-medium">Batal</button> <button type="submit" class="flex-1 px-4 py-3 rounded-xl btn-primary font-medium">Lanjut ke Pembayaran</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Invoice Modal -->
+   <div id="invoice-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay">
+    <div class="card-gradient rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto"><!-- Invoice Header -->
+     <div class="text-center mb-6 pb-6 border-b border-white/10">
+      <div class="inline-block px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-medium mb-3">
+       ✓ Pesanan Berhasil Dibuat
+      </div>
+      <h3 class="text-2xl font-bold mb-2">Invoice Pemesanan</h3>
+      <p id="invoice-number" class="text-gray-400 text-sm">#INV-2024-000001</p>
+     </div><!-- Product Details -->
+     <div id="invoice-content" class="space-y-4 mb-6"><!-- Invoice content will be rendered here -->
+     </div><!-- Payment Info -->
+     <div class="bg-white/5 border border-white/10 rounded-xl p-4 mb-6">
+      <h4 class="text-sm font-semibold text-gray-300 mb-3">📋 Detail Pembayaran</h4>
+      <div class="space-y-2 text-sm">
+       <div class="flex justify-between"><span class="text-gray-400">Metode:</span> <span id="invoice-payment-method" class="font-medium">Bank Transfer</span>
+       </div>
+       <div class="flex justify-between"><span class="text-gray-400">Status:</span> <span id="invoice-status" class="px-2 py-1 rounded bg-yellow-500/20 text-yellow-400 text-xs font-medium">Menunggu Pembayaran</span>
+       </div>
+       <hr class="border-white/10 my-2">
+       <div class="flex justify-between text-lg font-bold"><span>Total:</span> <span id="invoice-total" class="text-purple-400">Rp 0</span>
+       </div>
+      </div>
+     </div><!-- Customer Info -->
+     <div class="bg-white/5 border border-white/10 rounded-xl p-4 mb-6">
+      <h4 class="text-sm font-semibold text-gray-300 mb-3">👤 Data Pemesanan</h4>
+      <div class="space-y-2 text-sm">
+       <div>
+        <p class="text-gray-400 text-xs mb-1">ID Game:</p>
+        <p id="invoice-user-id" class="font-medium">-</p>
+       </div>
+       <div>
+        <p class="text-gray-400 text-xs mb-1">Server:</p>
+        <p id="invoice-server" class="font-medium">-</p>
+       </div>
+       <div>
+        <p class="text-gray-400 text-xs mb-1">No. WhatsApp:</p>
+        <p id="invoice-whatsapp" class="font-medium">-</p>
+       </div>
+      </div>
+     </div><!-- Payment Instructions -->
+     <div id="payment-instructions" class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-6">
+      <p class="text-sm text-blue-300"><span class="font-semibold">💬 Instruksi Pembayaran:</span><br>
+        Kami akan segera menghubungi Anda via WhatsApp untuk konfirmasi dan instruksi pembayaran. Simpan invoice ini untuk referensi.</p>
+     </div><!-- Action Buttons -->
+     <div class="space-y-3">
+      <!-- Download & Share -->
+      <div class="flex gap-3">
+        <button onclick="downloadInvoice()" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors font-medium">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg> 
+          Unduh
+        </button> 
+        <button onclick="shareInvoice()" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors font-medium">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C9.589 12.438 10.995 12 12.5 12c1.506 0 2.911.438 3.816 1.342m2.526 6.031A9 9 0 1110.5 3a4 4 0 017.756 2.027M15 13h.01"/>
+          </svg> 
+          Bagikan
+        </button>
+      </div>
+      
+      <!-- Konfirmasi Bayar Button (PROMINENT) -->
+      <button id="confirm-payment-btn" onclick="confirmPayment()" class="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold text-lg shadow-2xl hover:from-green-600 hover:to-emerald-700 transform hover:scale-[1.02] hover:shadow-purple-500/25 transition-all duration-300 glow-cyan">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h10m4 0a1 1 0 11-2 0 1 1 0 012 0zm-6 0a1 1 0 11-2 0 1 1 0 012 0z"/>
+        </svg>
+        💰 KONFIRMASI BAYAR
+      </button>
+      
+      <!-- Secondary Actions -->
+      <div class="flex gap-3 text-sm">
+        <button onclick="closeInvoice()" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors font-medium">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg> 
+        Selesai & Belanja Lagi
+      </button>
+      </div>
+    </div>
+    </div>
+   </div><!-- Confirm Delete Modal -->
+   <div id="confirm-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay">
+    <div class="card-gradient rounded-2xl p-6 w-full max-w-sm text-center">
+     <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
+      <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+     </div>
+     <h3 class="text-xl font-bold mb-2" id="confirm-title">Konfirmasi Hapus</h3>
+     <p class="text-gray-400 mb-6" id="confirm-message">Apakah Anda yakin ingin menghapus item ini?</p>
+     <div class="flex gap-3"><button onclick="hideConfirmModal()" class="flex-1 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors font-medium">Batal</button> <button id="confirm-btn" class="flex-1 px-4 py-3 rounded-xl btn-danger font-medium">Hapus</button>
+     </div>
+    </div>
+   </div><!-- Toast Notification -->
+   <div id="toast" class="fixed bottom-4 right-4 z-50 hidden">
+    <div class="card-gradient rounded-xl px-6 py-4 flex items-center gap-3 shadow-lg">
+     <div id="toast-icon" class="w-8 h-8 rounded-full flex items-center justify-center"></div>
+     <p id="toast-message" class="font-medium"></p>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Default configuration
+    const defaultConfig = {
+      site_title: 'Top Up Center',
+      hero_text: 'Top Up Game Cepat & Aman',
+      primary_color: '#8b5cf6',
+      secondary_color: '#22d3ee',
+      background_color: '#0f0f23',
+      text_color: '#ffffff',
+      surface_color: '#1a1a3e',
+      font_family: 'Space Grotesk',
+      font_size: 16
+    };
+
+    let config = { ...defaultConfig };
+
+    // Data storage using localStorage
+    const STORAGE_KEYS = {
+      PRODUCTS: 'topup_products',
+      CATEGORIES: 'topup_categories',
+      ADMIN_CREDENTIALS: 'topup_admin_credentials'
+    };
+
+    const DEFAULT_PIN = '123456';
+
+    // State
+    let products = [];
+    let categories = [];
+    let selectedCategory = 'all';
+    let isAdminMode = false;
+    let deleteCallback = null;
+
+        // Update admin credentials
+    function changeAdminCredentials() {
+      const username = document.getElementById('settings-username').value.trim();
+      const pin = document.getElementById('settings-pin').value;
+      
+      if (!username || !/^\d{6}$/.test(pin)) {
+        showToast('Username & PIN (6 digit) wajib!', 'error');
+        return;
+      }
+      
+      setAdminCredentials(username, pin);
+      showToast(`Credentials diupdate: ${username}`, 'success');
+      
+      // Update welcome message
+      document.getElementById('admin-welcome').textContent = `Selamat datang, ${username}!`;
+      
+      document.getElementById('settings-username').value = '';
+      document.getElementById('settings-pin').value = '';
+    }
+
+    // Update enterAdminMode
+    function enterAdminMode() {
+      isAdminMode = true;
+      document.getElementById('store-view').classList.add('hidden');
+      document.getElementById('admin-view').classList.remove('hidden');
+      
+      const username = sessionStorage.getItem('admin_username') || 'Admin';
+      document.getElementById('admin-welcome').textContent = `Selamat datang, ${username}!`;
+      
+      renderAdminPanel();
+      updateStats();
+    }
+
+    // Update exitAdmin
+    function exitAdmin() {
+      isAdminMode = false;
+      sessionStorage.removeItem('admin_logged_in');
+      sessionStorage.removeItem('admin_username');
+      const adminView = document.getElementById('admin-view');
+      const storeView = document.getElementById('store-view');
+      if (adminView) adminView.classList.add('hidden');
+      if (storeView) storeView.classList.remove('hidden');
+      renderStore();
+    }
+
+    // Initialize
+    function init() {
+      try {
+        console.log('Initializing application...'); 
+        loadData();
+
+        if (!localStorage.getItem(STORAGE_KEYS.ADMIN_CREDENTIALS)) {
+          setAdminCredentials('admin', '123456');
+        }
+
+        renderStore();
+        renderAdminPanel();
+        updateStats();
+        console.log('Application initialized successfully');
+        console.log('Products loaded:', products.length);
+        console.log('Categories loaded:', categories.length);
+        
+        // Initialize Element SDK
+        if (window.elementSdk) {
+          console.log('Element SDK detected');
+          window.elementSdk.init({
+            defaultConfig,
+            onConfigChange: async (newConfig) => {
+              config = { ...config, ...newConfig };
+              applyConfig();
+            },
+            mapToCapabilities: (cfg) => ({
+              recolorables: [
+                {
+                  get: () => cfg.primary_color || defaultConfig.primary_color,
+                  set: (v) => { cfg.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); }
+                },
+                {
+                  get: () => cfg.secondary_color || defaultConfig.secondary_color,
+                  set: (v) => { cfg.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); }
+                },
+                {
+                  get: () => cfg.background_color || defaultConfig.background_color,
+                  set: (v) => { cfg.background_color = v; window.elementSdk.setConfig({ background_color: v }); }
+                },
+                {
+                  get: () => cfg.text_color || defaultConfig.text_color,
+                  set: (v) => { cfg.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+                },
+                {
+                  get: () => cfg.surface_color || defaultConfig.surface_color,
+                  set: (v) => { cfg.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); }
+                }
+              ],
+              borderables: [],
+              fontEditable: {
+                get: () => cfg.font_family || defaultConfig.font_family,
+                set: (v) => { cfg.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+              },
+              fontSizeable: {
+                get: () => cfg.font_size || defaultConfig.font_size,
+                set: (v) => { cfg.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+              }
+            }),
+            mapToEditPanelValues: (cfg) => new Map([
+              ['site_title', cfg.site_title || defaultConfig.site_title],
+              ['hero_text', cfg.hero_text || defaultConfig.hero_text]
+            ])
+          });
+        }
+      } catch (error) {
+        console.error('Critical error during initialization:', error);
+        showToast('Error: Gagal menginisialisasi aplikasi. Silakan refresh halaman.', 'error');
+      }
+    }
+
+    function applyConfig() {
+      const title = config.site_title || defaultConfig.site_title;
+      const hero = config.hero_text || defaultConfig.hero_text;
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+      
+      document.getElementById('site-title').textContent = title;
+      const heroEl = document.getElementById('hero-text');
+      heroEl.innerHTML = hero.replace('Cepat & Aman', '<span class="bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 bg-clip-text text-transparent">Cepat & Aman</span>');
+      
+      document.body.style.fontFamily = `${fontFamily}, sans-serif`;
+      document.body.style.fontSize = `${fontSize}px`;
+    }
+
+    // Data management
+    function loadData() {
+      try {
+        const storedProducts = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
+        const storedCategories = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
+        
+        products = storedProducts ? JSON.parse(storedProducts) : [];
+        categories = storedCategories ? JSON.parse(storedCategories) : [];
+        
+        // Validate data structure
+        if (!Array.isArray(products)) {
+          console.warn('Products data is not an array, resetting');
+          products = [];
+        }
+        if (!Array.isArray(categories)) {
+          console.warn('Categories data is not an array, resetting');
+          categories = [];
+        }
+        
+        console.log('Data loaded successfully:', {
+          productsCount: products.length,
+          categoriesCount: categories.length
+        });
+      } catch (e) {
+        console.error('Error loading data from localStorage:', e);
+        products = [];
+        categories = [];
+        showToast('Warning: Data loading error, starting fresh', 'error');
+      }
+    }
+
+    function saveData() {
+      try {
+        localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(products));
+        localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
+        console.log('Data saved successfully');
+      } catch (error) {
+        console.error('Error saving data to localStorage:', error);
+        showToast('Warning: Gagal menyimpan data ke storage lokal', 'error');
+      }
+    }
+
+    function getPin() {
+      return localStorage.getItem(STORAGE_KEYS.PIN) || DEFAULT_PIN;
+    }
+
+    function setPin(newPin) {
+      localStorage.setItem(STORAGE_KEYS.PIN, newPin);
+    }
+
+    // Render functions
+    function renderStore() {
+      renderCategories();
+      renderProducts();
+    }
+
+    function renderCategories() {
+      const nav = document.getElementById('categories-nav');
+      let html = `
+        <button onclick="filterByCategory('all')" class="px-4 py-2 rounded-full whitespace-nowrap transition-all ${selectedCategory === 'all' ? 'bg-purple-500 text-white' : 'bg-white/5 hover:bg-white/10 text-gray-300'}">
+          🎯 Semua
+        </button>
+      `;
+      
+      categories.forEach(cat => {
+        html += `
+          <button onclick="filterByCategory('${cat.id}')" class="px-4 py-2 rounded-full whitespace-nowrap transition-all ${selectedCategory === cat.id ? 'bg-purple-500 text-white' : 'bg-white/5 hover:bg-white/10 text-gray-300'}">
+            ${cat.emoji || '📦'} ${cat.name}
+          </button>
+        `;
+      });
+      
+      nav.innerHTML = html;
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('products-grid');
+      const empty = document.getElementById('empty-products');
+      
+      let filteredProducts = products.filter(p => p.active);
+      if (selectedCategory !== 'all') {
+        filteredProducts = filteredProducts.filter(p => p.categoryId === selectedCategory);
+      }
+      
+      if (filteredProducts.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      
+      empty.classList.add('hidden');
+      grid.innerHTML = filteredProducts.map(product => {
+        const category = categories.find(c => c.id === product.categoryId);
+        return `
+          <div class="product-card card-gradient rounded-2xl p-5 cursor-pointer" onclick="showOrderModal('${product.id}')">
+            <div class="flex items-start justify-between mb-4">
+              <div class="text-4xl floating">${product.emoji || '💎'}</div>
+              ${product.stock !== undefined && product.stock !== null ? `
+                <span class="px-2 py-1 rounded-full text-xs ${product.stock > 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">
+                  ${product.stock > 0 ? `Stok: ${product.stock}` : 'Habis'}
+                </span>
+              ` : ''}
+            </div>
+            <h3 class="font-semibold text-lg mb-1">${product.name}</h3>
+            ${category ? `<p class="text-sm text-gray-400 mb-2">${category.emoji || '📦'} ${category.name}</p>` : ''}
+            ${product.description ? `<p class="text-sm text-gray-500 mb-3 line-clamp-2">${product.description}</p>` : ''}
+            <div class="flex items-center justify-between">
+              <p class="text-xl font-bold text-purple-400">Rp ${formatPrice(product.price)}</p>
+              <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAdminPanel() {
+      renderAdminProducts();
+      renderAdminCategories();
+      updateCategorySelect();
+    }
+
+    function renderAdminProducts() {
+      const list = document.getElementById('admin-products-list');
+      const empty = document.getElementById('admin-empty-products');
+      
+      if (products.length === 0) {
+        list.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      
+      empty.classList.add('hidden');
+      list.innerHTML = products.map(product => {
+        const category = categories.find(c => c.id === product.categoryId);
+        return `
+          <div class="card-gradient rounded-xl p-4 flex items-center gap-4">
+            <div class="text-3xl">${product.emoji || '💎'}</div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <h4 class="font-semibold truncate">${product.name}</h4>
+                <span class="px-2 py-0.5 rounded-full text-xs ${product.active ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}">
+                  ${product.active ? 'Aktif' : 'Nonaktif'}
+                </span>
+              </div>
+              <p class="text-sm text-gray-400">${category ? category.name : 'Tanpa Kategori'} • Rp ${formatPrice(product.price)}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="editProduct('${product.id}')" class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Edit">
+                <svg class="w-5 h-5 text-gray-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+              </button>
+              <button onclick="confirmDeleteProduct('${product.id}')" class="p-2 rounded-lg hover:bg-red-500/20 transition-colors" title="Hapus">
+                <svg class="w-5 h-5 text-gray-400 hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAdminCategories() {
+      const list = document.getElementById('admin-categories-list');
+      const empty = document.getElementById('admin-empty-categories');
+      
+      if (categories.length === 0) {
+        list.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+      }
+      
+      empty.classList.add('hidden');
+      list.innerHTML = categories.map(cat => {
+        const productCount = products.filter(p => p.categoryId === cat.id).length;
+        return `
+          <div class="card-gradient rounded-xl p-4">
+            <div class="flex items-center justify-between mb-3">
+              <div class="text-3xl">${cat.emoji || '📦'}</div>
+              <div class="flex items-center gap-1">
+                <button onclick="editCategory('${cat.id}')" class="p-2 rounded-lg hover:bg-white/10 transition-colors" title="Edit">
+                  <svg class="w-4 h-4 text-gray-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                </button>
+                <button onclick="confirmDeleteCategory('${cat.id}')" class="p-2 rounded-lg hover:bg-red-500/20 transition-colors" title="Hapus">
+                  <svg class="w-4 h-4 text-gray-400 hover:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <h4 class="font-semibold">${cat.name}</h4>
+            <p class="text-sm text-gray-400">${productCount} produk</p>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateCategorySelect() {
+      const select = document.getElementById('product-category');
+      select.innerHTML = '<option value="">Pilih Kategori</option>' + 
+        categories.map(cat => `<option value="${cat.id}">${cat.emoji || '📦'} ${cat.name}</option>`).join('');
+    }
+
+    function updateStats() {
+      document.getElementById('stat-products').textContent = products.length;
+      document.getElementById('stat-categories').textContent = categories.length;
+      document.getElementById('stat-active').textContent = products.filter(p => p.active).length;
+      
+      const totalValue = products.reduce((sum, p) => sum + (p.price || 0), 0);
+      document.getElementById('stat-total-value').textContent = 'Rp ' + formatPrice(totalValue);
+    }
+
+    // Filter
+    function filterByCategory(catId) {
+      selectedCategory = catId;
+      renderCategories();
+      renderProducts();
+    }
+
+    // Admin access
+    function showAdminAccess() {
+      document.getElementById('admin-access-modal').classList.remove('hidden');
+      document.getElementById('admin-access-modal').classList.add('flex');
+      document.getElementById('admin-pin').value = '';
+      document.getElementById('login-error').classList.add('hidden');
+    }
+
+    function hideAdminAccess() {
+      document.getElementById('admin-access-modal').classList.add('hidden');
+      document.getElementById('admin-access-modal').classList.remove('flex');
+    }
+
+    function verifyAdmin(e) {
+      e.preventDefault();
+      const username = document.getElementById('admin-username').value.trim();
+      const pin = document.getElementById('admin-pin').value;
+
+      const adminData = getAdminCredentials();
+      const defaultAdmin = { username: 'admin', pin: '123456' };
+      
+      if (username === adminData.username && pin === adminData.pin) {
+        sessionStorage.setItem('admin_logged_in', 'true');
+        sessionStorage.setItem('admin_username', username);
+
+        hideAdminAccess();
+        enterAdminMode();
+        showToast(`Selamat datang, ${username}! 👋`, 'success');
+      } else {
+        document.getElementById('login-error').classList.remove('hidden');
+        document.getElementById('admin-pin').value = '';
+        console.warn('Login  failed:', { username, pin});
+      }
+    }
+
+        // Get admin credentials
+    function getAdminCredentials() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEYS.ADMIN_CREDENTIALS);
+        return stored ? JSON.parse(stored) : { username: 'admin', pin: '123456' };
+      } catch {
+        return { username: 'admin', pin: '123456' };
+      }
+    }
+
+    // Set admin credentials
+    function setAdminCredentials(username, pin) {
+      const credentials = { username, pin };
+      localStorage.setItem(STORAGE_KEYS.ADMIN_CREDENTIALS, JSON.stringify(credentials));
+    }
+
+    function enterAdminMode() {
+      isAdminMode = true;
+      document.getElementById('store-view').classList.add('hidden');
+      document.getElementById('admin-view').classList.remove('hidden');
+      renderAdminPanel();
+      updateStats();
+    }
+
+    // Admin tabs
+    function switchAdminTab(tab) {
+      const tabs = ['products', 'categories', 'settings'];
+      tabs.forEach(t => {
+        document.getElementById(`admin-${t}`).classList.toggle('hidden', t !== tab);
+        document.getElementById(`tab-${t}`).classList.toggle('bg-purple-500/20', t === tab);
+        document.getElementById(`tab-${t}`).classList.toggle('text-purple-400', t === tab);
+        document.getElementById(`tab-${t}`).classList.toggle('text-gray-400', t !== tab);
+      });
+    }
+
+    // Product modal
+    function showProductModal(productId = null) {
+      document.getElementById('product-modal').classList.remove('hidden');
+      document.getElementById('product-modal').classList.add('flex');
+      document.getElementById('product-form').reset();
+      document.getElementById('product-id').value = '';
+      document.getElementById('product-modal-title').textContent = 'Tambah Produk';
+      document.getElementById('product-active').checked = true;
+      
+      if (productId) {
+        const product = products.find(p => p.id === productId);
+        if (product) {
+          document.getElementById('product-modal-title').textContent = 'Edit Produk';
+          document.getElementById('product-id').value = product.id;
+          document.getElementById('product-name').value = product.name;
+          document.getElementById('product-category').value = product.categoryId || '';
+          document.getElementById('product-price').value = product.price;
+          document.getElementById('product-stock').value = product.stock || '';
+          document.getElementById('product-description').value = product.description || '';
+          document.getElementById('product-emoji').value = product.emoji || '';
+          document.getElementById('product-active').checked = product.active;
+        }
+      }
+    }
+
+    function hideProductModal() {
+      document.getElementById('product-modal').classList.add('hidden');
+      document.getElementById('product-modal').classList.remove('flex');
+    }
+
+    function saveProduct(e) {
+      e.preventDefault();
+      
+      const id = document.getElementById('product-id').value || generateId();
+      const productData = {
+        id,
+        name: document.getElementById('product-name').value,
+        categoryId: document.getElementById('product-category').value,
+        price: parseInt(document.getElementById('product-price').value) || 0,
+        stock: document.getElementById('product-stock').value ? parseInt(document.getElementById('product-stock').value) : null,
+        description: document.getElementById('product-description').value,
+        emoji: document.getElementById('product-emoji').value || '💎',
+        active: document.getElementById('product-active').checked
+      };
+
+      if (!productData.name || !productData.categoryId || productData.price <= 0) {
+        showToast('Harap isi semua field yang diperlukan!', 'error');
+        return false;
+    }
+      
+      const existingIndex = products.findIndex(p => p.id === id);
+      if (existingIndex >= 0) {
+        products[existingIndex] = productData;
+        showToast('Produk berhasil diperbarui!', 'success');
+      } else {
+        products.push(productData);
+        showToast('Produk berhasil ditambahkan!', 'success');
+      }
+      
+      saveData();
+      hideProductModal();
+      renderAdminProducts();
+      renderStore();
+      updateStats();
+
+      return false;
+    }
+
+    function editProduct(id) {
+      showProductModal(id);
+    }
+
+    function confirmDeleteProduct(id) {
+      console.log('=== confirmDeleteProduct CALLED ===');
+      console.log('Product ID:', id);
+      console.log('All products:', products);
+      
+      const product = products.find(p => p.id === id);
+      console.log('Found product:', product);
+      
+      if (!product) {
+        console.error('Product not found!');
+        showToast('Produk tidak ditemukan', 'error');
+        return;
+      }
+      
+      console.log('Showing confirm modal for:', product.name);
+      showConfirmModal(
+        'Hapus Produk',
+        `Apakah Anda yakin ingin menghapus "${product.name}"?`,
+        () => {
+          console.log('Callback triggered - deleting product:', product.name);
+          deleteProduct(id);
+        }
+      );
+    }
+
+    function deleteProduct(id) {
+      const beforeCount = products.length;
+      products = products.filter(p => p.id !== id);
+      const afterCount = products.length;
+      if (beforeCount === afterCount) {
+        showToast('Produk gagal dihapus!', 'error');
+        return;
+      }
+      saveData();
+      renderAdminProducts();
+      renderStore();
+      updateStats();
+      showToast('Produk berhasil dihapus!', 'success');
+    }
+
+    // Category modal
+    function showCategoryModal(categoryId = null) {
+      document.getElementById('category-modal').classList.remove('hidden');
+      document.getElementById('category-modal').classList.add('flex');
+      document.getElementById('category-form').reset();
+      document.getElementById('category-id').value = '';
+      document.getElementById('category-modal-title').textContent = 'Tambah Kategori';
+      
+      if (categoryId) {
+        const category = categories.find(c => c.id === categoryId);
+        if (category) {
+          document.getElementById('category-modal-title').textContent = 'Edit Kategori';
+          document.getElementById('category-id').value = category.id;
+          document.getElementById('category-name').value = category.name;
+          document.getElementById('category-emoji').value = category.emoji || '';
+        }
+      }
+    }
+
+    function hideCategoryModal() {
+      document.getElementById('category-modal').classList.add('hidden');
+      document.getElementById('category-modal').classList.remove('flex');
+    }
+
+    function saveCategory(e) {
+      e.preventDefault();
+      
+      const id = document.getElementById('category-id').value || generateId();
+      const categoryData = {
+        id,
+        name: document.getElementById('category-name').value,
+        emoji: document.getElementById('category-emoji').value || '📦'
+      };
+      
+      const existingIndex = categories.findIndex(c => c.id === id);
+      if (existingIndex >= 0) {
+        categories[existingIndex] = categoryData;
+        showToast('Kategori berhasil diperbarui!', 'success');
+      } else {
+        categories.push(categoryData);
+        showToast('Kategori berhasil ditambahkan!', 'success');
+      }
+      
+      saveData();
+      hideCategoryModal();
+      renderAdminCategories();
+      renderStore();
+      updateCategorySelect();
+      updateStats();
+    }
+
+    function editCategory(id) {
+      showCategoryModal(id);
+    }
+
+    function confirmDeleteCategory(id) {
+      const category = categories.find(c => c.id === id);
+      const productCount = products.filter(p => p.categoryId === id).length;
+      showConfirmModal(
+        'Hapus Kategori',
+        `Apakah Anda yakin ingin menghapus "${category?.name}"? ${productCount > 0 ? `(${productCount} produk akan kehilangan kategori)` : ''}`,
+        () => deleteCategory(id)
+      );
+    }
+
+    function deleteCategory(id) {
+      categories = categories.filter(c => c.id !== id);
+      products = products.map(p => p.categoryId === id ? { ...p, categoryId: '' } : p);
+      saveData();
+      renderAdminCategories();
+      renderAdminProducts();
+      renderStore();
+      updateCategorySelect();
+      updateStats();
+      showToast('Kategori berhasil dihapus!', 'success');
+    }
+
+    // Order modal
+    function showOrderModal(productId) {
+      try {
+        if (!productId) {
+          console.error('No product ID provided');
+          showToast('Error: ID produk tidak ditemukan', 'error');
+          return;
+        }
+        
+        const product = products.find(p => p.id === productId);
+        if (!product) {
+          console.error('Product not found:', productId);
+          showToast('Error: Produk tidak ditemukan', 'error');
+          return;
+        }
+        
+        if (product.stock !== undefined && product.stock !== null && product.stock <= 0) {
+          console.warn('Product out of stock:', product.name);
+          showToast('Maaf, stok produk ini habis!', 'error');
+          return;
+        }
+        
+        const modal = document.getElementById('order-modal');
+        if (!modal) {
+          console.error('Order modal element not found');
+          return;
+        }
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        const form = document.getElementById('order-form');
+        if (form) form.reset();
+        
+        const productIdInput = document.getElementById('order-product-id');
+        if (productIdInput) productIdInput.value = productId;
+        
+        const category = categories.find(c => c.id === product.categoryId);
+        const productInfo = document.getElementById('order-product-info');
+        if (productInfo) {
+          productInfo.innerHTML = `
+          <div class="text-5xl mb-4">${product.emoji || '💎'}</div>
+          <h4 class="text-xl font-bold mb-1">${product.name}</h4>
+          ${category ? `<p class="text-gray-400 text-sm mb-2">${category.name}</p>` : ''}
+          <p class="text-2xl font-bold text-purple-400">Rp ${formatPrice(product.price)}</p>
+        `;
+        }
+        
+        console.log('Order modal displayed for product:', product.name);
+      } catch (error) {
+        console.error('Error in showOrderModal:', error);
+        showToast('Error: Gagal membuka form pemesanan', 'error');
+      }
+    }
+
+    function hideOrderModal() {
+      try {
+        const modal = document.getElementById('order-modal');
+        if (modal) {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }
+        const form = document.getElementById('order-form');
+        if (form) form.reset();
+        console.log('Order modal hidden');
+      } catch (error) {
+        console.error('Error in hideOrderModal:', error);
+      }
+    }
+
+    function processOrder(e) {
+      e.preventDefault();
+      
+      try {
+        console.log('=== PROCESS ORDER START ===');
+        
+        // Tunggu DOM siap
+        if (!document.readyState || document.readyState !== 'complete') {
+          console.warn('Document still loading, waiting...');
+          setTimeout(() => processOrder(e), 100);
+          return;
+        }
+        
+        // Get form element
+        const form = document.getElementById('order-form');
+        if (!form) {
+          console.error('Order form element not found');
+          showToast('Error: Form tidak ditemukan', 'error');
+          return;
+        }
+        
+        // Check HTML5 validation
+        if (!form.checkValidity()) {
+          console.error('Form validation failed');
+          showToast('Error: Semua field harus diisi dengan benar!', 'error');
+          return;
+        }
+        
+        const productId = document.getElementById('order-product-id')?.value || '';
+        console.log('Product ID:', productId);
+        
+        const product = products.find(p => p.id === productId);
+        console.log('Product found:', product);
+        
+        const userId = document.getElementById('order-user-id')?.value?.trim() || '';
+        const server = document.getElementById('order-server')?.value?.trim() || '-';
+        const whatsapp = document.getElementById('order-whatsapp')?.value?.trim() || '';
+        const paymentMethod = document.getElementById('order-payment')?.value || '';
+        
+        console.log('Form values:', { userId, server, whatsapp, paymentMethod, productId });
+        
+        // Custom validation
+        if (!productId) {
+          console.error('Product ID is empty');
+          showToast('Error: ID produk tidak ditemukan!', 'error');
+          return;
+        }
+        
+        if (!product) {
+          console.error('Product not found:', productId);
+          showToast('Error: Produk tidak ditemukan. Silakan coba lagi.', 'error');
+          return;
+        }
+        
+        if (!userId || userId.length === 0) {
+          console.error('User ID is empty');
+          showToast('Error: ID Game harus diisi!', 'error');
+          return;
+        }
+        
+        if (!whatsapp || whatsapp.length < 10) {
+          console.error('WhatsApp number is invalid');
+          showToast('Error: Nomor WhatsApp harus diisi dengan benar!', 'error');
+          return;
+        }
+        
+        if (!paymentMethod || paymentMethod === '') {
+          console.error('Payment method not selected');
+          showToast('Error: Metode pembayaran harus dipilih!', 'error');
+          return;
+        }
+        
+        console.log('All validations passed. Processing order...');
+        
+        // Show invoice
+        console.log('Showing invoice...');
+        const invoiceShown = showInvoice(product, userId, server, whatsapp, paymentMethod);
+        
+        if (invoiceShown) {
+          // Hide order modal after a short delay
+          setTimeout(() => {
+            hideOrderModal();
+            console.log('Order modal hidden after invoice shown');
+          }, 100);
+          
+          // Decrease stock if applicable
+          /*
+          if (product && product.stock !== null && product.stock > 0) {
+            const index = products.findIndex(p => p.id === productId);
+            if (index >= 0) {
+              products[index].stock--;
+              saveData();
+              renderStore();
+              sessionStorage.setItem(`order_${productId}_processing`, 'true');
+              console.log('Stock decreased for product:', product.name);
+            }
+          }*/
+
+          console.log('=== PROCESS ORDER SUCCESS ===');
+        } else {
+          console.error('Invoice was not shown');
+          showToast('Error: Gagal menampilkan invoice. Silakan coba lagi.', 'error');
+        }
+      } catch (error) {
+        console.error('=== ERROR IN PROCESS ORDER ===');
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        showToast('Error: Terjadi kesalahan saat memproses pesanan. Silakan coba lagi.', 'error');
+      }
+    }
+
+    function showInvoice(product, userId, server, whatsapp, paymentMethod) {
+      try {
+        console.log('=== SHOW INVOICE START ===');
+        resetInvoiceElements();
+        // Validasi product
+        if (!product || !product.id || !product.name || product.price === undefined) {
+          console.error('Invalid product data:', product);
+          showToast('Error: Data produk tidak valid. Silakan coba lagi.', 'error');
+          return false;
+        }
+
+        const closeInvoiceBtn = document.querySelector('#invoice-modal button[onclick="closeInvoice()"]');
+        if (closeInvoiceBtn) {
+          closeInvoiceBtn.disabled = true;
+          closeInvoiceBtn.style.opacity = '0.5';
+          closeInvoiceBtn.style.cursor = 'not-allowed';
+          closeInvoiceBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        
+        // Validasi parameter
+        if (!userId || !whatsapp || !paymentMethod) {
+          console.error('Invalid parameters:', { userId, whatsapp, paymentMethod });
+          showToast('Error: Data pemesanan tidak lengkap.', 'error');
+          return false;
+        }
+        
+        // Cek elemen modal ada
+        const invoiceModal = document.getElementById('invoice-modal');
+        if (!invoiceModal) {
+          console.error('Invoice modal element not found in DOM');
+          showToast('Error: Elemen modal tidak ditemukan.', 'error');
+          return false;
+        }
+        
+        // Cek semua elemen yang diperlukan
+        const requiredElements = [
+          'invoice-number',
+          'invoice-payment-method',
+          'invoice-total',
+          'invoice-user-id',
+          'invoice-server',
+          'invoice-whatsapp',
+          'invoice-content'
+        ];
+        
+        for (const elementId of requiredElements) {
+          const elem = document.getElementById(elementId);
+          if (!elem) {
+            console.error(`Required element not found: ${elementId}`);
+            showToast(`Error: Element ${elementId} tidak ditemukan.`, 'error');
+            return false;
+          }
+        }
+        
+        const invoiceNum = generateInvoiceNumber();
+        console.log('Generated invoice number:', invoiceNum);
+        
+        const paymentMethods = {
+          'transfer_bank': '🏦 Transfer Bank',
+          'qris': '📱 QRIS',
+          'gopay': '🚗 GoPay',
+          'ovo': '🟣 OVO',
+          'dana': '🟠 Dana'
+        };
+
+        const paymentDisplay = paymentMethods[paymentMethod] || paymentMethod;
+        console.log('Payment method display:', paymentDisplay);
+
+        // Set values
+        console.log('Setting invoice values...');
+        document.getElementById('invoice-number').textContent = `#${invoiceNum}`;
+        document.getElementById('invoice-payment-method').textContent = paymentDisplay;
+        document.getElementById('invoice-total').textContent = `Rp ${formatPrice(product.price)}`;
+        document.getElementById('invoice-user-id').textContent = userId || '-';
+        document.getElementById('invoice-server').textContent = server === '-' ? 'Tidak ada' : server;
+        document.getElementById('invoice-whatsapp').textContent = whatsapp || '-';
+
+        // Product details
+        console.log('Setting product details...');
+        const invoiceContent = `
+          <div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl">
+            <div class="text-4xl">${product.emoji || '💎'}</div>
+            <div class="flex-1">
+              <p class="text-sm text-gray-400">Produk</p>
+              <p class="font-semibold">${product.name}</p>
+              <p class="text-purple-400 font-bold">Rp ${formatPrice(product.price)}</p>
+            </div>
+          </div>
+          <div class="text-xs text-gray-500 text-center">
+            Tanggal: ${new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </div>
+        `;
+        document.getElementById('invoice-content').innerHTML = invoiceContent;
+
+        // Store invoice data for download
+        console.log('Storing invoice data...');
+        window.currentInvoice = {
+          number: invoiceNum,
+          product: product.name,
+          price: product.price,
+          userId: userId,
+          server: server,
+          whatsapp: whatsapp,
+          paymentMethod: paymentDisplay,
+          date: new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })
+        };
+
+        // Show modal
+        console.log('Showing invoice modal...');
+        invoiceModal.classList.remove('hidden');
+        invoiceModal.classList.add('flex');
+        
+        // Verify modal is visible
+        const computedStyle = window.getComputedStyle(invoiceModal);
+        const isVisible = computedStyle.display !== 'none';
+        console.log('Invoice modal visible:', isVisible);
+        
+        if (!isVisible) {
+          console.warn('Invoice modal is not visible. Forcing display...');
+          invoiceModal.style.display = 'flex !important';
+        }
+        
+        console.log('=== SHOW INVOICE SUCCESS ===');
+        return true;
+      } catch (error) {
+        console.error('=== ERROR IN SHOW INVOICE ===');
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+        showToast('Error: Gagal menampilkan invoice. Silakan coba lagi.', 'error');
+        return false;
+      }
+    }
+
+    function generateInvoiceNumber() {
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const random = Math.random().toString(36).substr(2, 5).toUpperCase();
+      return `${year}${month}${day}-${random}`;
+    }
+
+    function downloadInvoice() {
+      try {
+        console.log('=== DOWNLOAD INVOICE START ===');
+        if (!window.currentInvoice) {
+          console.error('No current invoice to download');
+          showToast('Error: Tidak ada invoice untuk diunduh', 'error');
+          return;
+        }
+      
+      const inv = window.currentInvoice;
+      const content = `
+════════════════════════════════════
+   INVOICE PEMESANAN TOP UP CENTER
+════════════════════════════════════
+
+Invoice Number: #${inv.number}
+Tanggal: ${inv.date}
+
+────────────────────────────────────
+DETAIL PRODUK
+────────────────────────────────────
+Produk: ${inv.product}
+Harga: Rp ${formatPrice(inv.price)}
+
+────────────────────────────────────
+DATA PEMESANAN
+────���───────────────────────────────
+ID Game: ${inv.userId}
+Server: ${inv.server === '-' ? 'Tidak ada' : inv.server}
+No. WhatsApp: ${inv.whatsapp}
+
+────────────────────────────────────
+PEMBAYARAN
+────────────────────────────────────
+Metode Pembayaran: ${inv.paymentMethod}
+Total: Rp ${formatPrice(inv.price)}
+Status: Menunggu Pembayaran
+
+════════════════════════════════════
+CATATAN PENTING
+════════════════════════════════════
+• Simpan nomor invoice ini untuk referensi
+• Kami akan menghubungi Anda via WhatsApp
+• Jangan lupa konfirmasi pembayaran
+• Jika ada kendala, hubungi admin kami
+
+═══════════════════════��════════════
+Terima kasih telah berbelanja!
+════════════════════════════════════
+      `;
+
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Invoice-${inv.number}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+        console.log('=== DOWNLOAD INVOICE SUCCESS ===');
+        showToast('Invoice berhasil diunduh!', 'success');
+      } catch (error) {
+        console.error('ERROR in downloadInvoice:', error.message);
+        showToast('Error: Gagal mengunduh - ' + error.message, 'error');
+      }
+    }
+
+    function shareInvoice() {
+      try {
+        if (!window.currentInvoice) {
+          console.error('No current invoice');
+          showToast('Error: Tidak ada invoice untuk dibagikan', 'error');
+          return;
+        }
+        
+        const inv = window.currentInvoice;
+        if (!inv.whatsapp) {
+          console.error('No WhatsApp number in invoice');
+          showToast('Error: Nomor WhatsApp tidak ditemukan', 'error');
+          return;
+        }
+        
+        const text = `
+*INVOICE PEMESANAN TOP UP CENTER*
+
+No. Invoice: #${inv.number}
+Tanggal: ${inv.date}
+
+📦 *Produk* 
+${inv.product}
+
+💰 *Harga*
+Rp ${formatPrice(inv.price)}
+
+👤 *Data Pemesanan*
+ID Game: ${inv.userId}
+Server: ${inv.server === '-' ? 'Tidak ada' : inv.server}
+
+💳 *Metode Pembayaran*
+${inv.paymentMethod}
+
+Status: Menunggu Pembayaran
+
+Terima kasih! 🙏
+      `;
+
+        const waNumber = inv.whatsapp.replace(/\D/g, '');
+        if (!waNumber) {
+          console.error('Invalid WhatsApp number');
+          showToast('Error: Nomor WhatsApp tidak valid', 'error');
+          return;
+        }
+        
+        const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(text)}`;
+        
+        console.log('Opening WhatsApp:', waUrl);
+        window.open(waUrl, '_blank');
+        showToast('Membuka WhatsApp...', 'success');
+      } catch (error) {
+        console.error('Error in shareInvoice:', error);
+        showToast('Error: Gagal membuka WhatsApp', 'error');
+      }
+    }
+
+    function closeInvoice() {
+      try {
+        const statusElement = document.getElementById('invoice-status');
+        const isPaid = statusElement && statusElement.innerHTML.includes('PEMBAYARAN TERVERIFIKASI');
+        
+        if (!isPaid) {
+          console.warn('Payment not confirmed yet, cannot close invoice');
+          showToast('⚠️ Selesaikan pembayaran terlebih dahulu!', 'error');
+          return;
+        }
+
+        console.log('🔄 Closing & Full Reset invoice...');
+        
+        // Hide modal
+        const modal = document.getElementById('invoice-modal');
+        if (modal) {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }
+        
+        window.currentInvoice = null;
+        resetInvoiceElements();
+        
+        console.log('✅ Invoice fully reset');
+        showToast('Siap belanja lagi! 🛒', 'success');
+        
+      } catch (error) {
+        console.error('Error closeInvoice:', error);
+      }
+    }
+
+    // 🔥 FUNGSI BARU - Reset SEMUA invoice elements
+    function resetInvoiceElements() {
+      // Status
+      const statusEl = document.getElementById('invoice-status');
+      if (statusEl) {
+        statusEl.className = 'px-2 py-1 rounded bg-yellow-500/20 text-yellow-400 text-xs font-medium';
+        statusEl.textContent = 'Menunggu Pembayaran';
+      }
+      
+      // Payment instructions
+      const instructionsEl = document.getElementById('payment-instructions');
+      if (instructionsEl) {
+        instructionsEl.className = 'bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-6';
+        instructionsEl.innerHTML = `
+          <p class="text-sm text-blue-300">
+            <span class="font-semibold">💬 Instruksi Pembayaran:</span><br>
+            Klik "KONFIRMASI BAYAR" untuk menyelesaikan pesanan. 
+            Simpan invoice ini untuk referensi.
+          </p>
+        `;
+      }
+
+      const closeInvoiceBtn = document.querySelector('#invoice-modal button[onclick="closeInvoice()"]');
+      if (closeInvoiceBtn) {
+        closeInvoiceBtn.disabled = false;
+        closeInvoiceBtn.style.opacity = '1';
+        closeInvoiceBtn.style.cursor = 'pointer';
+        closeInvoiceBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+      
+      
+      // Konfirmasi button - FULL RESET
+      const confirmBtn = document.getElementById('confirm-payment-btn');
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.style.cursor = 'pointer';
+        confirmBtn.style.opacity = '1';
+        confirmBtn.classList.remove('opacity-75', 'cursor-not-allowed', 'animate-pulse');
+        confirmBtn.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h10m4 0a1 1 0 11-2 0 1 1 0 012 0zm-6 0a1 1 0 11-2 0 1 1 0 012 0z"/>
+          </svg>
+          💰 KONFIRMASI BAYAR
+        `;
+        confirmBtn.onclick = confirmPayment; // Re-attach event
+      }
+    }
+
+    function backToStore() {
+        closeInvoice();
+    }
+
+    function processPayment() {
+      try {
+        console.log('=== PROCESS PAYMENT START ===');
+        
+        if (!window.currentInvoice) {
+          console.error('No current invoice for payment');
+          showToast('Error: Tidak ada invoice untuk dibayar', 'error');
+          return;
+        }
+        
+        const inv = window.currentInvoice;
+        console.log('Processing payment for invoice:', inv.number);
+        
+        // Update status ke "Dibayar"
+        const statusElement = document.getElementById('invoice-status');
+        if (statusElement) {
+          statusElement.className = 'px-2 py-1 rounded bg-green-500/20 text-green-400 text-xs font-medium';
+          statusElement.textContent = 'Pembayaran Diterima ✓';
+        }
+        
+        // Update instructions
+        const instructionsElement = document.getElementById('payment-instructions');
+        if (instructionsElement) {
+          instructionsElement.className = 'bg-green-500/10 border border-green-500/20 rounded-xl p-4 mb-6';
+          instructionsElement.innerHTML = '<p class="text-sm text-green-300"><span class="font-semibold">✓ Pesanan Dikonfirmasi:</span><br>Terima kasih! Pesanan Anda telah dikonfirmasi. Kami akan memproses pesanan dan mengirimkan item ke akun Anda segera. Tunggu notifikasi WhatsApp kami.</p>';
+        }
+        
+        // Change button
+        const paymentBtn = event.target.closest('button');
+        if (paymentBtn) {
+          paymentBtn.innerHTML = '<svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewbox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 13l4 4L19 7\" /></svg> Pesanan Dikonfirmasi';
+          paymentBtn.disabled = true;
+          paymentBtn.classList.remove('hover:opacity-90');
+          paymentBtn.classList.add('opacity-70');
+        }
+        
+        // Show success toast
+        showToast('Pesanan berhasil diproses! Kami akan hubungi Anda via WhatsApp.', 'success');
+        
+        console.log('=== PROCESS PAYMENT SUCCESS ===');
+      } catch (error) {
+        console.error('ERROR in processPayment:', error.message);
+        showToast('Error: Gagal memproses pembayaran - ' + error.message, 'error');
+      }
+    }
+
+    // Confirm modal
+    function showConfirmModal(title, message, callback) {
+      console.log('=== showConfirmModal CALLED ===');
+      console.log('Title:', title);
+      console.log('Message:', message);
+      
+      const modal = document.getElementById('confirm-modal');
+      if (!modal) {
+        console.error('Confirm modal not found!');
+        return;
+      }
+      
+      // Reset modal state
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.getElementById('confirm-title').textContent = title;
+      document.getElementById('confirm-message').textContent = message;
+      
+      // Simpan callback
+      window._deleteCallback = callback;
+      
+      // Setup tombol hapus
+      const confirmBtn = document.getElementById('confirm-btn');
+      if (confirmBtn) {
+        // Hapus semua event listener lama
+        const newBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+        
+        // Pasang event listener baru
+        newBtn.onclick = function() {
+          console.log('Delete button clicked');
+          hideConfirmModal();
+          if (window._deleteCallback) {
+            console.log('Executing delete callback');
+            window._deleteCallback();
+            window._deleteCallback = null;
+          } else {
+            console.warn('No callback found!');
+          }
+        };
+      }
+      
+      // Setup tombol batal
+      const cancelBtn = modal.querySelector('button[onclick="hideConfirmModal()"]');
+      if (cancelBtn) {
+        cancelBtn.onclick = function() {
+          console.log('Cancel button clicked');
+          hideConfirmModal();
+        };
+      }
+    }
+
+    function hideConfirmModal() {
+      const modal = document.getElementById('confirm-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+      deleteCallback = null;
+    }
+
+    // Settings
+    function changePin() {
+      const newPin = document.getElementById('settings-pin').value;
+      if (!/^\d{6}$/.test(newPin)) {
+        showToast('PIN harus 6 digit angka!', 'error');
+        return;
+      }
+      setPin(newPin);
+      document.getElementById('settings-pin').value = '';
+      showToast('PIN berhasil diubah!', 'success');
+    }
+
+    function confirmResetData() {
+      showConfirmModal(
+        'Reset Semua Data',
+        'Apakah Anda yakin? Semua produk dan kategori akan dihapus secara permanen!',
+        resetAllData
+      );
+    }
+
+    function resetAllData() {
+      products = [];
+      categories = [];
+      saveData();
+      renderAdminPanel();
+      renderStore();
+      updateStats();
+      showToast('Semua data berhasil direset!', 'success');
+    }
+
+    // Toast
+    function showToast(message, type = 'success') {
+      try {
+        const toast = document.getElementById('toast');
+        const icon = document.getElementById('toast-icon');
+        const msg = document.getElementById('toast-message');
+        
+        if (!toast || !icon || !msg) {
+          console.error('Toast elements not found');
+          console.log('Toast message:', message);
+          return;
+        }
+        
+        msg.textContent = message;
+        
+        if (type === 'success') {
+          icon.className = 'w-8 h-8 rounded-full flex items-center justify-center bg-green-500/20';
+          icon.innerHTML = '<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+        } else {
+          icon.className = 'w-8 h-8 rounded-full flex items-center justify-center bg-red-500/20';
+          icon.innerHTML = '<svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>';
+        }
+        
+        toast.classList.remove('hidden');
+        setTimeout(() => {
+          if (toast) toast.classList.add('hidden');
+        }, 4000);
+      } catch (error) {
+        console.error('Error in showToast:', error);
+      }
+    }
+
+    // Helpers
+    function generateId() {
+      return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    }
+
+    function formatPrice(price) {
+      return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+
+    // Debug function - untuk recovery jika modal stuck
+    window.debugInvoice = function() {
+      console.log('=== DEBUG INVOICE ===');
+      console.log('Current Invoice:', window.currentInvoice);
+      const modal = document.getElementById('invoice-modal');
+      console.log('Invoice Modal Element:', modal);
+      if (modal) {
+        console.log('Modal classList:', modal.classList);
+        console.log('Modal display:', window.getComputedStyle(modal).display);
+      }
+      
+      // Try to force show modal
+      if (window.currentInvoice && modal) {
+        console.log('Forcing modal display...');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        modal.style.display = 'flex !important';
+        console.log('Modal should be visible now');
+      }
+    };
+
+    // Debug function - untuk show order modal
+    window.debugOrderModal = function() {
+      console.log('=== DEBUG ORDER MODAL ===');
+      const modal = document.getElementById('order-modal');
+      console.log('Order Modal Element:', modal);
+      if (modal) {
+        console.log('Modal classList:', modal.classList);
+        console.log('Modal display:', window.getComputedStyle(modal).display);
+      }
+    };
+
+    // Comprehensive debug function
+    window.fullDebug = function() {
+      console.clear();
+      console.log('=== FULL APPLICATION DEBUG ===');
+      console.log('Products:', products.length, 'items');
+      console.log('Categories:', categories.length, 'items');
+      console.log('Current Invoice:', window.currentInvoice);
+      
+      console.log('\n=== MODAL STATES ===');
+      const orderModal = document.getElementById('order-modal');
+      const invoiceModal = document.getElementById('invoice-modal');
+      
+      console.log('Order Modal:');
+      console.log('  - Element exists:', !!orderModal);
+      console.log('  - Classes:', orderModal?.classList.toString());
+      console.log('  - Display:', window.getComputedStyle(orderModal).display);
+      console.log('  - Hidden:', orderModal?.classList.contains('hidden'));
+      
+      console.log('\nInvoice Modal:');
+      console.log('  - Element exists:', !!invoiceModal);
+      console.log('  - Classes:', invoiceModal?.classList.toString());
+      console.log('  - Display:', window.getComputedStyle(invoiceModal).display);
+      console.log('  - Hidden:', invoiceModal?.classList.contains('hidden'));
+      
+      console.log('\n=== FORM STATES ===');
+      const orderForm = document.getElementById('order-form');
+      console.log('Order Form:');
+      console.log('  - Element exists:', !!orderForm);
+      console.log('  - Valid:', orderForm?.checkValidity());
+      console.log('  - User ID:', document.getElementById('order-user-id')?.value);
+      console.log('  - WhatsApp:', document.getElementById('order-whatsapp')?.value);
+      console.log('  - Payment:', document.getElementById('order-payment')?.value);
+      
+      console.log('\n=== BUTTON TEST ===');
+      console.log('Testing button functionality:');
+      console.log('downloadInvoice:', typeof downloadInvoice);
+      console.log('shareInvoice:', typeof shareInvoice);
+      console.log('processPayment:', typeof processPayment);
+      console.log('closeInvoice:', typeof closeInvoice);
+      console.log('backToStore:', typeof backToStore);
+      
+      console.log('\n=== HELPER COMMANDS ===');
+      console.log('downloadInvoice() - Download invoice as text file');
+      console.log('shareInvoice() - Share invoice via WhatsApp');
+      console.log('processPayment() - Process payment and confirm order');
+      console.log('closeInvoice() - Close invoice modal');
+      console.log('backToStore() - Return to store');
+    };
+
+    // Global error handler
+    window.addEventListener('error', function(event) {
+      console.error('Uncaught error:', event.error);
+      if (event.error) {
+        showToast(`Error: ${event.error.message}`, 'error');
+      }
+    });
+
+    window.addEventListener('unhandledrejection', function(event) {
+      console.error('Unhandled promise rejection:', event.reason);
+      showToast('Error: Terjadi kesalahan yang tidak terduga', 'error');
+    });
+
+    // Konfirmasi Pembayaran
+function confirmPayment() {
+  try {
+    console.log('=== CONFIRM PAYMENT START ===');
+    
+    if (!window.currentInvoice) {
+      console.error('No current invoice for payment');
+      showToast('Error: Tidak ada invoice untuk dibayar', 'error');
+      return;
+    }
+    
+    const inv = window.currentInvoice;
+    console.log('Confirming payment for invoice:', inv.number);
+
+    const product = products.find(p => p.name === inv.product);
+    if (product && product.stock !== null && product.stock > 0) {
+      const index = products.findIndex(p => p.id === product.id);
+      if (index >= 0) {
+        products[index].stock--;
+        saveData();
+        renderStore();
+        console.log('Stock decreased after payment for product:', product.name);
+      }
+    } else if (product && product.stock === 0) {
+      console.warn('Product out of stock:', product.name);
+      showToast('Maaf, stok produk ini habis!', 'error');
+      return;
+    }
+    
+    // Disable button to prevent double-click
+    const btn = document.getElementById('confirm-payment-btn');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = `
+        <svg class="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Memproses...
+      `;
+    }
+    
+    // Simulasi proses pembayaran (2 detik)
+    setTimeout(() => {
+      // Update status ke "Dibayar & Diproses"
+      const statusElement = document.getElementById('invoice-status');
+      if (statusElement) {
+        statusElement.className = 'px-3 py-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-bold shadow-lg';
+        statusElement.innerHTML = '✅ <strong>PEMBAYARAN TERVERIFIKASI</strong>';
+      }
+      
+      // Update instruksi pembayaran
+      const instructionsElement = document.getElementById('payment-instructions');
+      if (instructionsElement) {
+        instructionsElement.className = 'bg-gradient-to-r from-green-500/20 to-emerald-600/20 border border-green-500/30 rounded-2xl p-6 mb-6 shadow-2xl';
+        instructionsElement.innerHTML = `
+          <div class="text-center">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-green-500/30 flex items-center justify-center glow-cyan">
+              <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <h4 class="text-lg font-bold text-green-400 mb-2">🎉 Pesanan Dikonfirmasi!</h4>
+            <p class="text-green-300 text-sm leading-relaxed">
+              Terima kasih! Pembayaran Anda telah terverifikasi. 
+              <br><strong>Item akan dikirim dalam 5-15 menit</strong> ke akun game Anda.
+              <br><br>📱 Pantau status via WhatsApp kami.
+            </p>
+          </div>
+        `;
+      }
+      
+      // Update tombol konfirmasi
+      if (btn) {
+        btn.innerHTML = `
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+          </svg>
+          Pesanan Terkonfirmasi ✅
+        `;
+        btn.className = 'w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold text-lg shadow-2xl opacity-75 cursor-not-allowed';
+        btn.onclick = null;
+      }
+
+      const closeInvoiceBtn = document.querySelector('#invoice-modal button[onclick="closeInvoice()"]');
+      if (closeInvoiceBtn) {
+        closeInvoiceBtn.disabled = false;
+        closeInvoiceBtn.style.opacity = '1';
+        closeInvoiceBtn.style.cursor = 'pointer';
+        closeInvoiceBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        console.log('✅ Selesai & Belanja Lagi button enabled');
+      }
+      
+      // Simpan status pesanan ke localStorage (opsional untuk tracking)
+      const orders = JSON.parse(localStorage.getItem('topup_orders') || '[]');
+      orders.push({
+        ...inv,
+        status: 'confirmed',
+        confirmedAt: new Date().toISOString()
+      });
+      localStorage.setItem('topup_orders', JSON.stringify(orders));
+      
+      // Tampilkan toast sukses
+      showToast('✅ Pesanan berhasil dikonfirmasi! Item akan segera dikirim.', 'success');
+      
+      console.log('=== CONFIRM PAYMENT SUCCESS ===');
+      console.log('Order confirmed:', inv.number);
+      
+    }, 2000);
+    
+  } catch (error) {
+    console.error('ERROR in confirmPayment:', error);
+    showToast('Error: Gagal mengonfirmasi pembayaran - ' + error.message, 'error');
+    
+    // Reset button jika error
+    const btn = document.getElementById('confirm-payment-btn');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = `
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h10m4 0a1 1 0 11-2 0 1 1 0 012 0zm-6 0a1 1 0 11-2 0 1 1 0 012 0z"/>
+        </svg>
+        💰 KONFIRMASI BAYAR
+      `;
+    }
+  }
+}
+
+    // Initialize app
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c3d7786c10a6cf4',t:'MTc2OTQwMzgzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
